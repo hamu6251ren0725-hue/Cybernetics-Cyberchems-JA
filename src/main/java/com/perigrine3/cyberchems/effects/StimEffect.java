@@ -1,6 +1,5 @@
 package com.perigrine3.cyberchems.effects;
 
-import com.perigrine3.createcybernetics.CreateCybernetics;
 import com.perigrine3.createcybernetics.common.capabilities.ModAttachments;
 import com.perigrine3.createcybernetics.common.capabilities.PlayerCyberwareData;
 import com.perigrine3.cyberchems.Cyberchems;
@@ -53,8 +52,13 @@ public class StimEffect extends MobEffect {
 
     @Override
     public boolean applyEffectTick(LivingEntity living, int amplifier) {
-        if (!(living instanceof Player player)) return true;
-        if (player.level().isClientSide) return true;
+        if (!(living instanceof Player player)) {
+            return true;
+        }
+
+        if (player.level().isClientSide) {
+            return true;
+        }
 
         applyHumanityPenalty(player, amplifier);
 
@@ -66,8 +70,13 @@ public class StimEffect extends MobEffect {
 
     @Override
     public void onMobRemoved(LivingEntity living, int amplifier, Entity.RemovalReason reason) {
-        if (!(living instanceof Player player)) return;
-        if (player.level().isClientSide) return;
+        if (!(living instanceof Player player)) {
+            return;
+        }
+
+        if (player.level().isClientSide) {
+            return;
+        }
 
         clearHumanityPenalty(player);
 
@@ -87,22 +96,32 @@ public class StimEffect extends MobEffect {
 
     private static void applyHumanityPenalty(Player player, int amplifier) {
         PlayerCyberwareData data = player.getData(ModAttachments.CYBERWARE);
+        if (data == null) {
+            return;
+        }
 
         int level = amplifier + 1;
         int penalty = level * HUMANITY_PENALTY_PER_LEVEL;
-        data.setHumanityPenalty(HUMANITY_KEY, penalty);
+
+        data.setHumanityPenalty(player, HUMANITY_KEY, penalty);
     }
 
     private static void clearHumanityPenalty(Player player) {
         PlayerCyberwareData data = player.getData(ModAttachments.CYBERWARE);
+        if (data == null) {
+            return;
+        }
 
-        data.clearHumanityPenalty(HUMANITY_KEY);
+        data.clearHumanityPenalty(player, HUMANITY_KEY);
     }
 
     private static void ensureEffect(Player player, int amplifier) {
         MobEffectInstance cur = player.getEffect(MobEffects.MOVEMENT_SPEED);
-        if (cur != null && cur.getAmplifier() == amplifier && cur.getDuration() > (StimEffect.BUFF_REFRESH_TICKS / 2)) return;
-        player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, StimEffect.BUFF_REFRESH_TICKS, amplifier, false, true, true));
+        if (cur != null && cur.getAmplifier() == amplifier && cur.getDuration() > (BUFF_REFRESH_TICKS / 2)) {
+            return;
+        }
+
+        player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, BUFF_REFRESH_TICKS, amplifier, false, true, true));
     }
 
     private static float dodgeChance(int amplifier) {
@@ -124,6 +143,7 @@ public class StimEffect extends MobEffect {
             double ax = attacker.getX() - player.getX();
             double az = attacker.getZ() - player.getZ();
             double len = Math.sqrt(ax * ax + az * az);
+
             if (len > 0.0001) {
                 ax /= len;
                 az /= len;
@@ -149,23 +169,36 @@ public class StimEffect extends MobEffect {
         private static final String NBT_STACK_GUARD_TICK = "cc_stim_stack_guard_tick";
         private static final int MAX_AMP = 255;
 
+        private StimHooks() {}
+
         @SubscribeEvent
         public static void onIncomingDamage(LivingIncomingDamageEvent event) {
             LivingEntity target = event.getEntity();
-            if (!(target instanceof Player player)) return;
-            if (player.level().isClientSide) return;
+            if (!(target instanceof Player player)) {
+                return;
+            }
+
+            if (player.level().isClientSide) {
+                return;
+            }
 
             MobEffectInstance stim = player.getEffect(ModEffects.STIM);
-            if (stim == null) return;
+            if (stim == null) {
+                return;
+            }
 
             long now = player.level().getGameTime();
             CompoundTag pd = player.getPersistentData();
 
             long last = pd.getLong(NBT_LAST_DODGE_TICK);
-            if ((now - last) < DODGE_COOLDOWN_TICKS) return;
+            if ((now - last) < DODGE_COOLDOWN_TICKS) {
+                return;
+            }
 
             float chance = dodgeChance(stim.getAmplifier());
-            if (player.getRandom().nextFloat() >= chance) return;
+            if (player.getRandom().nextFloat() >= chance) {
+                return;
+            }
 
             event.setCanceled(true);
             pd.putLong(NBT_LAST_DODGE_TICK, now);
@@ -176,20 +209,30 @@ public class StimEffect extends MobEffect {
         @SubscribeEvent
         public static void onEffectAdded(MobEffectEvent.Added event) {
             LivingEntity entity = event.getEntity();
-            if (entity.level().isClientSide) return;
+            if (entity.level().isClientSide) {
+                return;
+            }
 
             MobEffectInstance added = event.getEffectInstance();
-            if (!added.is(ModEffects.STIM)) return;
+            if (added == null || !added.is(ModEffects.STIM)) {
+                return;
+            }
 
             MobEffectInstance old = event.getOldEffectInstance();
-            if (old == null) return;
+            if (old == null) {
+                return;
+            }
 
             long now = entity.level().getGameTime();
-            var pd = entity.getPersistentData();
-            if (pd.getLong(NBT_STACK_GUARD_TICK) == now) return;
+            CompoundTag pd = entity.getPersistentData();
+            if (pd.getLong(NBT_STACK_GUARD_TICK) == now) {
+                return;
+            }
 
             int desiredAmp = Math.min(old.getAmplifier() + 1, MAX_AMP);
-            if (added.getAmplifier() == desiredAmp) return;
+            if (added.getAmplifier() == desiredAmp) {
+                return;
+            }
 
             pd.putLong(NBT_STACK_GUARD_TICK, now);
 
@@ -206,15 +249,45 @@ public class StimEffect extends MobEffect {
         @SubscribeEvent
         public static void onEffectExpired(MobEffectEvent.Expired event) {
             MobEffectInstance inst = event.getEffectInstance();
-            if (inst == null) return;
-            if (!inst.is(ModEffects.STIM)) return;
-
-            if (event.getEntity() instanceof Player player && !player.level().isClientSide) {
-                PlayerCyberwareData data = player.getData(ModAttachments.CYBERWARE);
-                data.clearHumanityPenalty(HUMANITY_KEY);
+            if (inst == null) {
+                return;
             }
+
+            if (!inst.is(ModEffects.STIM)) {
+                return;
+            }
+
+            if (!(event.getEntity() instanceof Player player)) {
+                return;
+            }
+
+            if (player.level().isClientSide) {
+                return;
+            }
+
+            clearHumanityPenalty(player);
         }
 
-        private StimHooks() {}
+        @SubscribeEvent
+        public static void onEffectRemoved(MobEffectEvent.Remove event) {
+            MobEffectInstance inst = event.getEffectInstance();
+            if (inst == null) {
+                return;
+            }
+
+            if (!inst.is(ModEffects.STIM)) {
+                return;
+            }
+
+            if (!(event.getEntity() instanceof Player player)) {
+                return;
+            }
+
+            if (player.level().isClientSide) {
+                return;
+            }
+
+            clearHumanityPenalty(player);
+        }
     }
 }

@@ -31,15 +31,24 @@ public class ImmunoboostEffect extends MobEffect {
 
     @Override
     public boolean applyEffectTick(LivingEntity living, int amplifier) {
-        if (!(living instanceof Player player)) return true;
-        if (player.level().isClientSide) return true;
+        if (!(living instanceof Player player)) {
+            return true;
+        }
+
+        if (player.level().isClientSide) {
+            return true;
+        }
 
         PlayerCyberwareData data = player.getData(ModAttachments.CYBERWARE);
-        if (data == null) return true;
+        if (data == null) {
+            return true;
+        }
 
-        data.setHumanityPenalty(HUMANITY_KEY, HUMANITY_PENALTY);
+        data.setHumanityPenalty(player, HUMANITY_KEY, HUMANITY_PENALTY);
 
-        if ((player.tickCount % ROLL_INTERVAL_TICKS) != 0) return true;
+        if ((player.tickCount % ROLL_INTERVAL_TICKS) != 0) {
+            return true;
+        }
 
         int implants = countCybernetics(data);
         cleanseHarmfulEffects(player, implants);
@@ -50,8 +59,13 @@ public class ImmunoboostEffect extends MobEffect {
 
     @Override
     public void onMobRemoved(LivingEntity living, int amplifier, Entity.RemovalReason reason) {
-        if (!(living instanceof Player player)) return;
-        if (player.level().isClientSide) return;
+        if (!(living instanceof Player player)) {
+            return;
+        }
+
+        if (player.level().isClientSide) {
+            return;
+        }
 
         clearHumanityPenalty(player);
     }
@@ -61,13 +75,23 @@ public class ImmunoboostEffect extends MobEffect {
 
         for (var entry : data.getAll().entrySet()) {
             var arr = entry.getValue();
-            if (arr == null) continue;
+            if (arr == null) {
+                continue;
+            }
 
             for (var installed : arr) {
-                if (installed == null) continue;
+                if (installed == null) {
+                    continue;
+                }
+
                 var st = installed.getItem();
-                if (st == null || st.isEmpty()) continue;
-                if (st.is(ModTags.Items.CYBERWARE_ITEM)) count++;
+                if (st == null || st.isEmpty()) {
+                    continue;
+                }
+
+                if (st.is(ModTags.Items.CYBERWARE_ITEM)) {
+                    count++;
+                }
             }
         }
 
@@ -76,16 +100,30 @@ public class ImmunoboostEffect extends MobEffect {
 
     private static void cleanseHarmfulEffects(Player player, int implants) {
         float chance = 0.90f - 0.05f * implants;
-        if (chance < 0.10f) chance = 0.10f;
-        if (chance > 0.90f) chance = 0.90f;
+        if (chance < 0.10f) {
+            chance = 0.10f;
+        }
+        if (chance > 0.90f) {
+            chance = 0.90f;
+        }
 
         Collection<MobEffectInstance> effects = player.getActiveEffects();
-        if (effects.isEmpty()) return;
+        if (effects.isEmpty()) {
+            return;
+        }
 
         for (MobEffectInstance inst : effects.toArray(new MobEffectInstance[0])) {
-            if (inst == null) continue;
-            if (inst.is(ModEffects.IMMUNOBOOST)) continue;
-            if (inst.getEffect().value().getCategory() != MobEffectCategory.HARMFUL) continue;
+            if (inst == null) {
+                continue;
+            }
+
+            if (inst.is(ModEffects.IMMUNOBOOST)) {
+                continue;
+            }
+
+            if (inst.getEffect().value().getCategory() != MobEffectCategory.HARMFUL) {
+                continue;
+            }
 
             if (player.getRandom().nextFloat() < chance) {
                 player.removeEffect(inst.getEffect());
@@ -94,10 +132,14 @@ public class ImmunoboostEffect extends MobEffect {
     }
 
     private static void rollImplantBacklashDamage(Player player, int implants) {
-        if (implants <= 2) return;
+        if (implants <= 2) {
+            return;
+        }
 
         float chance = (implants - 2) * 0.02f;
-        if (chance > 1.0f) chance = 1.0f;
+        if (chance > 1.0f) {
+            chance = 1.0f;
+        }
 
         if (player.getRandom().nextFloat() < chance) {
             player.hurt(player.damageSources().magic(), DAMAGE_AMOUNT);
@@ -106,8 +148,10 @@ public class ImmunoboostEffect extends MobEffect {
 
     public static void clearHumanityPenalty(Player player) {
         PlayerCyberwareData data = player.getData(ModAttachments.CYBERWARE);
-        if (data == null) return;
+        if (data == null) {
+            return;
+        }
 
-        data.clearHumanityPenalty(HUMANITY_KEY);
+        data.clearHumanityPenalty(player, HUMANITY_KEY);
     }
 }

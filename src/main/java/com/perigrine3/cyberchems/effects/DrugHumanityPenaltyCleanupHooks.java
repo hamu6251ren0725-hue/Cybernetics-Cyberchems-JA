@@ -22,29 +22,33 @@ public final class DrugHumanityPenaltyCleanupHooks {
     @SubscribeEvent
     public static void onPlayerTick(PlayerTickEvent.Post event) {
         Player player = event.getEntity();
-        if (player.level().isClientSide) return;
+        if (player.level().isClientSide) {
+            return;
+        }
 
         PlayerCyberwareData data = player.getData(ModAttachments.CYBERWARE);
-        if (data == null) return;
+        if (data == null) {
+            return;
+        }
 
         if (!player.hasEffect(ModEffects.ROID)) {
-            data.clearHumanityPenalty(ROID_KEY);
+            data.clearHumanityPenalty(player, ROID_KEY);
         }
 
         if (!player.hasEffect(ModEffects.STIM)) {
-            data.clearHumanityPenalty(STIM_KEY);
+            data.clearHumanityPenalty(player, STIM_KEY);
         }
 
         if (!player.hasEffect(ModEffects.BLACKLACE)) {
-            data.clearHumanityPenalty(BLACKLACE_KEY);
+            data.clearHumanityPenalty(player, BLACKLACE_KEY);
         }
 
         if (!player.hasEffect(ModEffects.IMMUNOBOOST)) {
-            data.clearHumanityPenalty(IMMUNOBOOST_KEY);
+            data.clearHumanityPenalty(player, IMMUNOBOOST_KEY);
         }
 
         if (!player.hasEffect(ModEffects.ADDICTION)) {
-            data.clearHumanityPenalty(ADDICTION_KEY);
+            data.clearHumanityPenalty(player, ADDICTION_KEY);
         }
     }
 }

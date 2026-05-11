@@ -103,10 +103,7 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 
 dependencies {
-    //implementation "curse.maven:cybernetics-1430192:7848819"
-
-    compileOnly files("libs/createcybernetics-0.4.3b-neoforge-1.21.1.jar")
-    runtimeOnly files("libs/createcybernetics-0.4.3b-neoforge-1.21.1.jar")
+    implementation "curse.maven:cybernetics-1430192:8074302"
 
 
     implementation ("curse.maven:jei-238222:6589027")

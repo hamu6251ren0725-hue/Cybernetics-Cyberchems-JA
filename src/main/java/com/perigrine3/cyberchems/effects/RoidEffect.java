@@ -70,8 +70,13 @@ public class RoidEffect extends MobEffect {
 
     @Override
     public boolean applyEffectTick(LivingEntity living, int amplifier) {
-        if (!(living instanceof Player player)) return true;
-        if (player.level().isClientSide) return true;
+        if (!(living instanceof Player player)) {
+            return true;
+        }
+
+        if (player.level().isClientSide) {
+            return true;
+        }
 
         applyHumanityPenalty(player, amplifier);
         applyOrUpdateScaledModifiers(player, amplifier);
@@ -82,10 +87,12 @@ public class RoidEffect extends MobEffect {
                 MobEffectInstance slow = player.getEffect(MobEffects.MOVEMENT_SLOWDOWN);
 
                 boolean removedAny = false;
+
                 if (weak != null && weak.getDuration() > (CRASH_TICKS / 2)) {
                     player.removeEffect(MobEffects.WEAKNESS);
                     removedAny = true;
                 }
+
                 if (slow != null && slow.getDuration() > (CRASH_TICKS / 2)) {
                     player.removeEffect(MobEffects.MOVEMENT_SLOWDOWN);
                     removedAny = true;
@@ -103,15 +110,22 @@ public class RoidEffect extends MobEffect {
 
     @Override
     public void onMobRemoved(LivingEntity living, int amplifier, Entity.RemovalReason reason) {
-        if (!(living instanceof Player player)) return;
-        if (player.level().isClientSide) return;
+        if (!(living instanceof Player player)) {
+            return;
+        }
+
+        if (player.level().isClientSide) {
+            return;
+        }
 
         clearHumanityPenalty(player);
         removeScaledModifiers(player);
 
         long guardUntil = player.getPersistentData().getLong(ROID_REDOSE_GUARD);
         long now = player.level().getGameTime();
-        if (guardUntil >= now) return;
+        if (guardUntil >= now) {
+            return;
+        }
 
         player.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, CRASH_TICKS, 0, false, false, false));
         player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, CRASH_TICKS, 0, false, false, false));
@@ -119,17 +133,21 @@ public class RoidEffect extends MobEffect {
 
     private static void applyHumanityPenalty(Player player, int amplifier) {
         PlayerCyberwareData data = player.getData(ModAttachments.CYBERWARE);
-        if (data == null) return;
+        if (data == null) {
+            return;
+        }
 
         int penalty = HUMANITY_PENALTY_BASE + (amplifier * HUMANITY_PENALTY_PER_EXTRA);
-        data.setHumanityPenalty(HUMANITY_KEY, penalty);
+        data.setHumanityPenalty(player, HUMANITY_KEY, penalty);
     }
 
     public static void clearHumanityPenalty(Player player) {
         PlayerCyberwareData data = player.getData(ModAttachments.CYBERWARE);
-        if (data == null) return;
+        if (data == null) {
+            return;
+        }
 
-        data.clearHumanityPenalty(HUMANITY_KEY);
+        data.clearHumanityPenalty(player, HUMANITY_KEY);
     }
 
     private static void applyOrUpdateScaledModifiers(Player player, int amplifier) {
@@ -164,10 +182,14 @@ public class RoidEffect extends MobEffect {
     }
 
     private static void upsert(AttributeInstance inst, ResourceLocation id, double amount, AttributeModifier.Operation op) {
-        if (inst == null) return;
+        if (inst == null) {
+            return;
+        }
 
         AttributeModifier existing = find(inst, id);
-        if (existing != null && existing.amount() == amount && existing.operation() == op) return;
+        if (existing != null && existing.amount() == amount && existing.operation() == op) {
+            return;
+        }
 
         if (existing != null) {
             inst.removeModifier(id);
@@ -177,16 +199,22 @@ public class RoidEffect extends MobEffect {
     }
 
     private static void remove(AttributeInstance inst, ResourceLocation id) {
-        if (inst == null) return;
+        if (inst == null) {
+            return;
+        }
+
         if (find(inst, id) != null) {
             inst.removeModifier(id);
         }
     }
 
     private static AttributeModifier find(AttributeInstance inst, ResourceLocation id) {
-        for (AttributeModifier m : inst.getModifiers()) {
-            if (m.is(id)) return m;
+        for (AttributeModifier modifier : inst.getModifiers()) {
+            if (modifier.is(id)) {
+                return modifier;
+            }
         }
+
         return null;
     }
 
@@ -198,9 +226,17 @@ public class RoidEffect extends MobEffect {
         @SubscribeEvent
         public static void onEffectRemoved(MobEffectEvent.Remove event) {
             MobEffectInstance inst = event.getEffectInstance();
-            if (inst == null || !inst.is(ModEffects.ROID)) return;
-            if (!(event.getEntity() instanceof Player player)) return;
-            if (player.level().isClientSide) return;
+            if (inst == null || !inst.is(ModEffects.ROID)) {
+                return;
+            }
+
+            if (!(event.getEntity() instanceof Player player)) {
+                return;
+            }
+
+            if (player.level().isClientSide) {
+                return;
+            }
 
             removeScaledModifiers(player);
             clearHumanityPenalty(player);
@@ -209,9 +245,17 @@ public class RoidEffect extends MobEffect {
         @SubscribeEvent
         public static void onEffectExpired(MobEffectEvent.Expired event) {
             MobEffectInstance inst = event.getEffectInstance();
-            if (inst == null || !inst.is(ModEffects.ROID)) return;
-            if (!(event.getEntity() instanceof Player player)) return;
-            if (player.level().isClientSide) return;
+            if (inst == null || !inst.is(ModEffects.ROID)) {
+                return;
+            }
+
+            if (!(event.getEntity() instanceof Player player)) {
+                return;
+            }
+
+            if (player.level().isClientSide) {
+                return;
+            }
 
             removeScaledModifiers(player);
             clearHumanityPenalty(player);
@@ -220,7 +264,9 @@ public class RoidEffect extends MobEffect {
         @SubscribeEvent
         public static void onPlayerTick(PlayerTickEvent.Post event) {
             Player player = event.getEntity();
-            if (player.level().isClientSide) return;
+            if (player.level().isClientSide) {
+                return;
+            }
 
             if (!player.hasEffect(ModEffects.ROID)) {
                 removeScaledModifiers(player);

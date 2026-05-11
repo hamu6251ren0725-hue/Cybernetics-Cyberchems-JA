@@ -26,8 +26,13 @@ public class BlackLaceEffect extends MobEffect {
 
     @Override
     public boolean applyEffectTick(LivingEntity living, int amplifier) {
-        if (living.level().isClientSide) return true;
-        if (!(living instanceof Player player)) return true;
+        if (living.level().isClientSide) {
+            return true;
+        }
+
+        if (!(living instanceof Player player)) {
+            return true;
+        }
 
         applyHumanityPenalty(player, amplifier);
         return true;
@@ -35,24 +40,33 @@ public class BlackLaceEffect extends MobEffect {
 
     @Override
     public void onMobRemoved(LivingEntity living, int amplifier, Entity.RemovalReason reason) {
-        if (living.level().isClientSide) return;
-        if (!(living instanceof Player player)) return;
+        if (living.level().isClientSide) {
+            return;
+        }
+
+        if (!(living instanceof Player player)) {
+            return;
+        }
 
         clearHumanityPenalty(player);
     }
 
     private static void applyHumanityPenalty(Player player, int amplifier) {
         PlayerCyberwareData data = player.getData(ModAttachments.CYBERWARE);
-        if (data == null) return;
+        if (data == null) {
+            return;
+        }
 
         int penalty = HUMANITY_PENALTY_BASE + (amplifier * HUMANITY_PENALTY_PER_EXTRA);
-        data.setHumanityPenalty(HUMANITY_KEY, penalty);
+        data.setHumanityPenalty(player, HUMANITY_KEY, penalty);
     }
 
     public static void clearHumanityPenalty(Player player) {
         PlayerCyberwareData data = player.getData(ModAttachments.CYBERWARE);
-        if (data == null) return;
+        if (data == null) {
+            return;
+        }
 
-        data.clearHumanityPenalty(HUMANITY_KEY);
+        data.clearHumanityPenalty(player, HUMANITY_KEY);
     }
 }

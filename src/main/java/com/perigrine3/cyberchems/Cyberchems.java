@@ -29,7 +29,7 @@ public class Cyberchems {
         ModPotions.register(modEventBus);
         ModItems.register(modEventBus);
 
-        modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
+        //modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
         modEventBus.addListener(this::addCreative);
     }
 
