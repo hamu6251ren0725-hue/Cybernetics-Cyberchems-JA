@@ -1,0 +1,56 @@
+{
+  "item.cyberchems.roid_autoinjector": "ロイドの自動注射器",
+  "item.cyberchems.roid_autoinjector.duration": "ロイド (20:00)",
+  "item.cyberchems.roid_autoinjector.desc": "注射すると効果時間を1日延長できる",
+
+  "item.cyberchems.stim_autoinjector": "スティムの自動注射器",
+  "item.cyberchems.stim_autoinjector.duration": "スティム (20:00)",
+  "item.cyberchems.stim_autoinjector.desc": "注射すると効果時間を1日延長できる",
+
+  "item.cyberchems.blacklace_autoinjector": "ブラックレースの自動注射器",
+  "item.cyberchems.blacklace_autoinjector.duration": "ブラックレース (20:00)",
+  "item.cyberchems.blacklace_autoinjector.desc": "注射すると効果時間を1日延長できる",
+
+  "item.cyberchems.immunoboost_autoinjector": "イミュノブーストの自動注射器",
+  "item.cyberchems.immunoboost_autoinjector.duration": "イミュノブースト (20:00)",
+  "item.cyberchems.immunoboost_autoinjector.desc": "注射すると効果時間を1日延長できる",
+
+  "item.cyberchems.warp_autoinjector": "ワープの自動注射器",
+  "item.cyberchems.warp_autoinjector.duration": "ワープ",
+
+  "item.cyberchems.addictol_autoinjector": "アディクトールの自動注射器",
+  "item.cyberchems.addictol_autoinjector.duration": "アディクトール (10:00)",
+  "item.cyberchems.addictol_autoinjector.desc": "注入すると効果時間が半日延長できる",
+
+  "item.minecraft.potion.effect.roid_potion": "ロイドのポーション",
+  "item.minecraft.splash_potion.effect.roid_potion": "ロイドのスプラッシュポーション",
+  "item.minecraft.lingering_potion.effect.roid_potion": "ロイドの残留ポーション",
+  "item.minecraft.potion.effect.stim_potion": "スティムのポーション",
+  "item.minecraft.splash_potion.effect.stim_potion": "スティムのスプラッシュポーション",
+  "item.minecraft.lingering_potion.effect.stim_potion": "スティムの残留ポーション",
+  "item.minecraft.potion.effect.blacklace_potion": "ブラックレースのポーション",
+  "item.minecraft.splash_potion.effect.blacklace_potion": "ブラックレースのスプラッシュポーション",
+  "item.minecraft.lingering_potion.effect.blacklace_potion": "ブラックレースの残留ポーション",
+  "item.minecraft.potion.effect.immunoboost_potion": "イミュノブーストのポーション",
+  "item.minecraft.splash_potion.effect.immunoboost_potion": "イミュノブーストのスプラッシュポーション",
+  "item.minecraft.lingering_potion.effect.immunoboost_potion": "イミュノブーストの残留ポーション",
+  "item.minecraft.potion.effect.warp_potion": "ワープのポーション",
+  "item.minecraft.splash_potion.effect.warp_potion": "ワープのスプラッシュポーション",
+  "item.minecraft.lingering_potion.effect.warp_potion": "ワープの残留ポーション",
+  "item.minecraft.potion.effect.addictol_potion": "アディクトールのポーション",
+  "item.minecraft.splash_potion.effect.addictol_potion": "アディクトールのスプラッシュポーション",
+  "item.minecraft.lingering_potion.effect.addictol_potion": "アディクトールの残留ポーション",
+
+
+
+
+
+  "effect.cyberchems.roid": "ロイド",
+  "effect.cyberchems.stim": "スティム",
+  "effect.cyberchems.blacklace": "ブラックレース",
+  "effect.cyberchems.immunoboost": "イミュノブースト",
+  "effect.cyberchems.warp": "ワープ",
+  "effect.cyberchems.addictol": "アディクトール",
+
+  "effect.cyberchems.addiction": "依存症"
+}
